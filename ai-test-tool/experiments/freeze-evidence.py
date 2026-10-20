@@ -1,4 +1,4 @@
-"""Index saved evidence and hashes for reporting; no tests, API calls or DB access."""
+"""Index saved evidence and hashes as JSON; no tests, API calls or DB access."""
 import argparse
 import csv
 from datetime import datetime, timezone, timedelta
@@ -11,7 +11,6 @@ TOOL = Path(__file__).resolve().parents[1]
 REPO = TOOL.parent
 OLD = TOOL / "experiments" / "2026-10-19"
 MANIFEST = TOOL / "experiments" / "2026-10-20" / "evidence-baseline.json"
-DOCUMENT = TOOL / "docs" / "EVIDENCE-BASELINE.md"
 ARCHIVE = "ce3290af09456590f2b98a9dcfcb51a7320f25b6"
 LOCAL = timezone(timedelta(hours=7))
 
@@ -124,55 +123,19 @@ def build():
         "artifactSha256": {str(p.relative_to(REPO)).replace("\\", "/"): digest(p)
                            for p in sorted(artifacts)},
     }
-    lines = ["# Chốt kết quả và danh mục minh chứng", "",
-             "Đề tài: **Kiểm thử tự động website hỗ trợ học tiếng Trung và xây dựng công cụ tích hợp AI hỗ trợ phân tích kết quả.** Đánh giá website HSK là trọng tâm môn học; HSK Test Lab là sản phẩm hỗ trợ được phát triển trong dự án.", "",
-             "Chốt hồ sơ ngày **20/10/2026** từ các tệp đã có; không chạy thêm test hoặc truy cập DB. Số liệu đợt chính thuộc **19/10/2026**. Các giờ dưới đây đã đổi sang UTC+7; JSON/XML giữ timestamp gốc. “Đối chiếu/ghi nhận” không có nghĩa là thời điểm bắt đầu chạy.", "",
-             "## 1. Phiên bản và môi trường", "",
-             f"- HEAD được ghi trong `environment.json`: `{environment['gitHead']}`. Khi ghi metadata, công cụ và báo cáo còn ở working tree, chưa commit; không có một clean commit được xác nhận đại diện toàn bộ lần chạy.",
-             f"- Commit lưu trữ mã/minh chứng sau thực nghiệm: `{ARCHIVE}`. Không gọi commit này là commit đã được chạy test vào thời điểm trước đó. Hash các tệp nguồn được ghi theo từng giai đoạn trong manifest bên dưới.",
-             "- Metadata trước Selenium và metadata sau sửa launcher khác hash `hsk-test-server.ts` đúng với thay đổi cwd đã ghi nhận. Hash của 33 tệp Selenium khớp hồ sơ lượt đầy đủ; các hash này không bao phủ toàn bộ mã website hoặc toàn bộ snapshot.",
-             "- Selenium: Windows, Python 3.14, pytest/Selenium theo bộ dependency đã khóa, Chrome 154.0.8037.100; HSK snapshot local, endpoint Neon khác website hiện tại. Nhãn cấu hình `hsk-test-2026-10-19` chưa được xác minh qua Neon management API. Không đưa URL DB/khóa API vào bảng.",
-             "- Vitest: Node 24.19.0, Vitest 2.1.9, không cần DB cho 22 ca hộp trắng. Test công cụ dùng fixture/mock và tiến trình riêng. UI/CLI Selenium cùng snapshot nhưng không reset DB giữa lượt, nên không coi dữ liệu hoàn toàn đồng nhất.", "",
-             "Nguồn: [metadata ban đầu](../experiments/2026-10-19/environment.json), [metadata Selenium](../experiments/2026-10-19/selenium-environment.json), [hash test của lượt đầy đủ](../experiments/2026-10-19/selenium-full-results.json), [dependency Python](../requirements-lock.txt), [manifest SHA-256](../experiments/2026-10-20/evidence-baseline.json).", "",
-             "## 2. Bảng tổng hợp được dùng trong báo cáo", "",
-             "| ID | Vai trò | Thời gian và loại mốc | Môi trường | Kết quả được dùng | Minh chứng / run ID |",
-             "| --- | --- | --- | --- | --- | --- |"]
-    for i, role, time, env, result, filename, run in rows:
-        evidence = f"[Tệp nguồn](../experiments/2026-10-19/{filename})"
-        if run: evidence += f"; `{run}`"
-        lines.append(f"| {i} | {role} | {time} | {env} | {result} | {evidence} |")
-    lines += ["", "E-S02 là mẫu số chính của kết luận E2E: **85 ca, 75 PASS, 10 FAIL**. E-V01 là bộ logic 22 ca riêng. E-S01/E-S03 là chạy lại một tập con để đối chiếu luồng, không thêm ca độc lập vào tổng. E-T01 đánh giá công cụ, không thay kết quả website. E-X01 xác minh khả năng nhập báo cáo lịch sử, không xác nhận website hiện tại đạt các báo cáo đó.", "",
-              "## 3. Minh chứng JMeter lịch sử, chưa đưa vào kết luận đạt hiệu năng", "",
-              "Các JTL đã tồn tại trước đợt điều phối bằng HSK Test Lab, dù timestamp đều cùng ngày 19/10/2026. Phân loại lịch sử theo lượt/nguồn, không chỉ theo ngày. Chỉ kiểm kê số dòng sample và khoảng timestamp từ tệp; chưa chốt commit website, DB/môi trường, cấu hình tải, assertion, ngưỡng chấp nhận hoặc tính tương đương giữa các lượt. Tên `PROD`, `05`, `10`, `20` không đủ xác minh môi trường hay số người dùng thực tế.", "",
-              "| ID | JTL gốc | Khoảng sample UTC+7 | Số bản ghi sample (không phải testcase) | Báo cáo có sẵn |",
-              "| --- | --- | --- | ---: | --- |"]
-    for item in historical:
-        start, end = local_time(item["firstSampleUtc"]), local_time(item["lastSampleUtc"])
-        report = f"[HTML](../../{item['reportIndex']})" if item["reportIndex"] else "Chưa có"
-        lines.append(f"| {item['id']} | [{item['jtl']}](../../{item['jtl']}) | {start} → {end} | {item['sampleRecords']} | {report} |")
-    lines += ["", "Kế hoạch hiện có: [HSK-performance.jmx](../../HSK-performance.jmx), [HSK-progress-performance.jmx](../../HSK-progress-performance.jmx). Chưa khẳng định từng lượt lịch sử chạy đúng phiên bản hiện tại của các JMX này. Không cộng sample JMeter với ca Selenium/Vitest, không suy mẫu thành PASS nghiệp vụ hoặc kết luận website đạt tải. Chương 5 có thể trình bày kiểm kê lịch sử với giới hạn trên; kết luận định lượng hiệu năng cần hồ sơ môi trường và ngưỡng được xác định trước lượt bổ sung.", "",
-              "## 4. Quy tắc viết và sử dụng minh chứng", "",
-              "1. Dùng ID E-* cho kết quả đợt chính/đối chiếu và H-J* cho JMeter lịch sử. Mỗi bảng số liệu của chương 3–6 phải chỉ rõ bộ nào; không gộp lại thành tổng ca mới.",
-              "2. Kiểm tra API trong Selenium (status/body/CRUD/persistence) thuộc chính ca Selenium đó. Chưa có bộ kiểm thử API độc lập được chốt trong hồ sơ này; HTTP 200 của Gemini là kết nối tích hợp, không phải PASS toàn bộ API HSK.",
-              "3. Giữ E-S00 cancelled và các FAIL gốc. Bốn nhóm HSK-001…004 quy về 10 FAIL; nhóm nhỏ PASS không đóng NOTE-04. Không cần sửa website để làm đẹp số liệu.",
-              "4. Đánh giá AI E-A02 là sơ bộ, chưa có người chấm độc lập; không công bố độ chính xác chung 70%. HTTP 503 lưu riêng với câu trả lời retry.",
-              "5. Hash manifest khóa nội dung tệp được dùng trong báo cáo, không thay thế việc biết commit/môi trường tại thời điểm chạy. Không bổ sung metadata hồi tố như thể đã thu thập trong quá trình thực thi.", "",
-              "Ma trận: [yêu cầu–tiêu chí–test–kết quả](TEST-TRACEABILITY.md). Lỗi: [mức ảnh hưởng, cách tái hiện và độ chắc chắn](DEFECT-REGISTER.md). Bố cục báo cáo: [sáu chương](REPORT-OUTLINE.md).", "",
-              "Kiểm tra hồ sơ bằng `python ai-test-tool/experiments/freeze-evidence.py --check`; bỏ `--check` chỉ khi chủ động chốt lại tệp đã thay đổi. Script không tạo lượt test mới, không dùng khóa API và không gọi database.", ""]
-    return json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", "\n".join(lines)
+    return json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    manifest, document = build()
+    manifest = build()
     if args.check:
-        if MANIFEST.read_text(encoding="utf-8") != manifest or DOCUMENT.read_text(encoding="utf-8") != document:
+        if MANIFEST.read_text(encoding="utf-8") != manifest:
             raise SystemExit("Evidence baseline changed; review before freezing again.")
         print("OK: evidence baseline, historical JMeter inventory and SHA-256 hashes match.")
     else:
         MANIFEST.parent.mkdir(parents=True, exist_ok=True)
         MANIFEST.write_text(manifest, encoding="utf-8")
-        DOCUMENT.write_text(document, encoding="utf-8")
-        print("Frozen evidence index and hashes; no tests or external services executed.")
+        print("Frozen JSON evidence index and hashes; no report files or tests generated.")

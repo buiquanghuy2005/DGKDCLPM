@@ -128,9 +128,9 @@ Kiểm tra giao diện bằng Chrome headless, khi công cụ đã chạy ở c�
 
 Kịch bản kiểm tra chọn nhóm, chạy 5 test Vitest thật, xem nhật ký, nhập XML hộp trắng có sẵn, lọc kết quả, lịch sử và bố cục mobile. Các báo cáo thật này được giữ trong lịch sử; ảnh giao diện nằm ở `data/qa/`.
 
-Phạm vi hiện tại không gồm đánh giá assertion, sinh test bằng AI hoặc JMeter runner. Đã có [báo cáo thực nghiệm](docs/EXPERIMENT-REPORT.md) và [kết quả đầy đủ 85 ca Selenium](docs/SELENIUM-RESULTS.md), phân biệt kết quả công cụ, test website và báo cáo lịch sử. Các lượt Selenium dùng endpoint Neon kiểm thử riêng.
+Phạm vi hiện tại không gồm đánh giá assertion, sinh test bằng AI hoặc JMeter runner. Báo cáo dự án hiện dùng [BAO_CAO.pdf](../BAO_CAO.pdf); [bộ minh chứng](experiments/README.md) giữ dữ liệu gốc của công cụ, test website và báo cáo lịch sử. Các lượt Selenium dùng endpoint Neon kiểm thử riêng.
 
-Cập nhật tài liệu 20/10/2026: [bảng chốt minh chứng và phiên bản](docs/EVIDENCE-BASELINE.md), [truy vết yêu cầu → tiêu chí → từng ca → kết quả](docs/TEST-TRACEABILITY.md), [bảng lỗi và trạng thái](docs/DEFECT-REGISTER.md), [phiếu chấm AI độc lập chưa thực hiện](docs/AI-INDEPENDENT-REVIEW.md). Đề tài đã chốt đặt đánh giá HSK làm trọng tâm, công cụ là sản phẩm hỗ trợ; [bố cục sáu chương](docs/REPORT-OUTLINE.md). Kết luận theo tiêu chí ở mục 8 báo cáo thực nghiệm; giữ nguyên số liệu ngày 19/10/2026. AI vẫn là đánh giá sơ bộ, chưa có độ chính xác tổng quát được xác nhận.
+Cập nhật tài liệu 20/10/2026: bỏ nhóm báo cáo Markdown và chuyển liên kết sang PDF. Giữ [hướng dẫn Neon kiểm thử](docs/NEON-TEST-SETUP.md) và dữ liệu thực nghiệm ngày 19/10/2026. AI vẫn là đánh giá sơ bộ, chưa có độ chính xác tổng quát được xác nhận. Các script đối chiếu chỉ kiểm tra dữ liệu hoặc ghi manifest JSON, không tạo lại báo cáo Markdown.
 
 ### Kết quả kiểm tra công cụ ngày 19/10/2026
 

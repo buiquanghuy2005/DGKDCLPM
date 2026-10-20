@@ -62,4 +62,4 @@ Khi xong, dùng Ctrl+C để dừng từng terminal. Đừng xóa branch trong l
 
 Đã cấu hình endpoint kiểm thử riêng và kiểm tra khác endpoint website hiện tại. Kết nối chỉ đọc ban đầu xác nhận 12 bảng, có `User` và `NotebookEntry`, số tài khoản lúc kiểm tra là 0. HSK snapshot đã khởi động thành công và nhóm tìm kiếm/sổ tay chạy qua UI đạt 10/10 PASS, khớp XML gốc. Các lượt sau tạo tài khoản/dữ liệu tổng hợp trên endpoint kiểm thử này.
 
-Launcher đã được sửa để đặt thư mục làm việc vào snapshot trước khi chuẩn bị Next, vì HSK đọc `public/data` và Tailwind theo thư mục hiện tại. Lượt đầu gặp lỗi đường dẫn đã được dừng và lưu riêng; không cộng lượt đó vào kết quả nhóm 10 ca. Xem [báo cáo thực nghiệm](EXPERIMENT-REPORT.md) để biết kết quả mới nhất.
+Launcher đã được sửa để đặt thư mục làm việc vào snapshot trước khi chuẩn bị Next, vì HSK đọc `public/data` và Tailwind theo thư mục hiện tại. Lượt đầu gặp lỗi đường dẫn đã được dừng và lưu riêng; không cộng lượt đó vào kết quả nhóm 10 ca. Báo cáo dự án hiện dùng [BAO_CAO.pdf](../../BAO_CAO.pdf); kết quả gốc được giữ trong [bộ minh chứng](../experiments/README.md).
